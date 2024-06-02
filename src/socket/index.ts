@@ -1,15 +1,13 @@
 import { useEffect, useState } from "react";
-import { io } from "socket.io-client";
+import { io, Socket } from "socket.io-client";
 import { Message } from "../types";
+import { generateUUID } from "../services/generateUUID";
 
-const URL = import.meta.env.VITE_SOCKET_HOST!;
-
-const socket = io(URL);
-
-export const useSocket = () => {
-  const [isConnected, setIsConnected] = useState(socket.connected);
+export const useSocket = (userName: string) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [connectedClients, setConnectedClients] = useState(0);
+  const [socket, setSocket] = useState<Socket | null>(null);
+  const [isConnected, setIsConnected] = useState(false);
 
   function updateMessages(value: Message) {
     setMessages((state) => {
@@ -19,9 +17,14 @@ export const useSocket = () => {
     });
   }
 
-  useEffect(() => {
+  function connectToSocket() {
+    const URL = import.meta.env.VITE_SOCKET_HOST!;
+    const newSocket = io(URL);
+    setSocket(newSocket);
+
     function onConnect() {
       setIsConnected(true);
+      newSocket.emit("connected-user", userName);
     }
 
     function onDisconnect() {
@@ -36,14 +39,39 @@ export const useSocket = () => {
       setConnectedClients(value);
     }
 
-    socket.on("connect", onConnect);
-    socket.on("disconnect", onDisconnect);
-    socket.on("new-message", receiveMessage);
-    socket.on("connected-clients", connectedClients);
+    function newUser(value: string) {
+      const temp: Message = {
+        id: generateUUID(),
+        sender: value,
+        senderId: "",
+        text: "",
+        time: new Date(),
+        type: "notification",
+      };
+      updateMessages(temp);
+    }
 
+    newSocket.on("connect", onConnect);
+    newSocket.on("disconnect", onDisconnect);
+    newSocket.on("new-message", receiveMessage);
+    newSocket.on("connected-clients", connectedClients);
+    newSocket.on("new-user", newUser);
+  }
+
+  useEffect(() => {
+    if (userName) {
+      connectToSocket();
+    }
+  }, [userName]);
+
+  useEffect(() => {
     return () => {
-      socket.off("connect", onConnect);
-      socket.off("disconnect", onDisconnect);
+      if (socket) {
+        socket.off("connect");
+        socket.off("disconnect");
+        socket.off("new-message");
+        socket.off("connected-clients");
+      }
     };
   }, []);
 
@@ -52,6 +80,6 @@ export const useSocket = () => {
     isConnected,
     connectedClients,
     socket,
-    updateMessages
+    updateMessages,
   };
 };

@@ -4,4 +4,5 @@ export type Message = {
   id: string;
   time: Date;
   senderId: string;
+  type: "message" | "notification";
 };

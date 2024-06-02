@@ -7,6 +7,7 @@ import { generateUUID } from "./services/generateUUID";
 import { useSocket } from "./socket";
 import { useNewDate } from "./hooks/useNewDate";
 import { useScrollToLastMessage } from "./hooks/useScrollToItem";
+import { Message } from "./types";
 
 function App() {
   const [userName, setUserName] = useState("");
@@ -14,7 +15,7 @@ function App() {
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   const { messages, connectedClients, isConnected, socket, updateMessages } =
-    useSocket();
+    useSocket(userName);
   useNewDate();
   useScrollToLastMessage(messagesEndRef, messages);
 
@@ -32,16 +33,19 @@ function App() {
     const id = generateUUID();
     const time = new Date();
 
-    const messageItem = {
+    const messageItem: Message = {
       text: data.message,
       sender: userName,
       id: id,
       time: time,
       senderId: userId,
+      type: "message",
     };
 
     updateMessages(messageItem);
-    socket.emit("message", messageItem);
+    if (socket) {
+      socket.emit("message", messageItem);
+    }
     form.reset();
   }
 
@@ -84,6 +88,14 @@ function App() {
       <div className="h-full flex flex-col w-full md:w-4/5 lg:w-1/2 m-auto relative">
         <div id="chat-area" className="w-full">
           {messages.map((m) => {
+            if (m.type === "notification") {
+              return (
+                <p className="text-gray-500 text-sm font-mono text-center">
+                  {m.sender} just joined the chat !!!
+                </p>
+              );
+            }
+
             const check = userId === m.senderId;
             return (
               <ChatBubble
