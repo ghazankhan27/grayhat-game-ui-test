@@ -10,6 +10,9 @@ function App() {
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [userName, setUserName] = useState("");
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const [connectedClients, setConnectedClients] = useState(0);
+  const [, setNow] = useState(new Date());
+  const [userId] = useState(generateUUID());
 
   useEffect(() => {
     function onConnect() {
@@ -21,11 +24,6 @@ function App() {
     }
 
     function receiveMessage(value: Message) {
-      if (value.sender === userName) {
-        console.log("yes");
-        return;
-      }
-
       setMessages((state) => {
         const temp = [...state];
         temp.push(value);
@@ -33,9 +31,14 @@ function App() {
       });
     }
 
+    function connectedClients(value: number) {
+      setConnectedClients(value);
+    }
+
     socket.on("connect", onConnect);
     socket.on("disconnect", onDisconnect);
     socket.on("new-message", receiveMessage);
+    socket.on("connected-clients", connectedClients);
 
     return () => {
       socket.off("connect", onConnect);
@@ -48,6 +51,7 @@ function App() {
     sender: string;
     id: string;
     time: Date;
+    senderId: string;
   };
 
   const [messages, setMessages] = useState<Message[]>([]);
@@ -71,6 +75,7 @@ function App() {
       sender: userName,
       id: id,
       time: time,
+      senderId: userId,
     };
 
     socket.emit("message", messageItem);
@@ -89,7 +94,6 @@ function App() {
     }
 
     setUserName(data.myname);
-
     form.reset();
   }
 
@@ -100,6 +104,12 @@ function App() {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  useEffect(() => {
+    setInterval(() => {
+      setNow(new Date());
+    }, 30000);
+  }, []);
 
   if (!userName) {
     return (
@@ -125,7 +135,7 @@ function App() {
       <div className="h-full flex flex-col w-full md:w-4/5 lg:w-1/2 m-auto relative">
         <div id="chat-area" className="w-full">
           {messages.map((m) => {
-            const check = userName === m.sender;
+            const check = userId === m.senderId;
             return (
               <ChatBubble
                 sender={m.sender}
@@ -139,7 +149,7 @@ function App() {
           <div ref={messagesEndRef} />
         </div>
         <div className="flex gap-x-6 absolute right-0">
-          <MyButton>Online (42)</MyButton>
+          <MyButton>Online ({connectedClients})</MyButton>
         </div>
         <div>
           <form onSubmit={sendMessage}>

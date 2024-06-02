@@ -8,7 +8,7 @@ export const ChatBubble = (
     dir: "left" | "right";
   }>
 ) => {
-  const { text, time, dir } = props;
+  const { text, time, dir, sender } = props;
 
   function timeAgo(date: Date): string {
     const now = new Date();
@@ -51,6 +51,7 @@ export const ChatBubble = (
       <div className="bg-blue-200 p-2 text-black base-shadow text-sm font-semibold font-mono border-white border-2">
         <p>{text}</p>
       </div>
+      <p className="text-xs pt-1">{sender}</p>
     </div>
   );
 };
