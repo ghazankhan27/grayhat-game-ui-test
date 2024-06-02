@@ -14,7 +14,10 @@
 1. Clone the repository to your local machine.
 2. Run 
   `npm install`
-3. Run 
+3. Create a `.env` file with the content: 
+  `VITE_SOCKET_HOST="localhost:3000"`
+4. This is the default host when running the backend server locally. If you change the port, please update the `.env` file.
+5. Run 
   `npm run dev`
 to start the development server.
 
