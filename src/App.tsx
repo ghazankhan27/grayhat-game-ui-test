@@ -13,7 +13,8 @@ function App() {
   const [userId] = useState(generateUUID());
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
-  const { messages, connectedClients, isConnected, socket } = useSocket();
+  const { messages, connectedClients, isConnected, socket, updateMessages } =
+    useSocket();
   useNewDate();
   useScrollToLastMessage(messagesEndRef, messages);
 
@@ -39,6 +40,7 @@ function App() {
       senderId: userId,
     };
 
+    updateMessages(messageItem);
     socket.emit("message", messageItem);
     form.reset();
   }

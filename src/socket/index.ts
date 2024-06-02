@@ -11,6 +11,14 @@ export const useSocket = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [connectedClients, setConnectedClients] = useState(0);
 
+  function updateMessages(value: Message) {
+    setMessages((state) => {
+      const temp = [...state];
+      temp.push(value);
+      return temp;
+    });
+  }
+
   useEffect(() => {
     function onConnect() {
       setIsConnected(true);
@@ -21,11 +29,7 @@ export const useSocket = () => {
     }
 
     function receiveMessage(value: Message) {
-      setMessages((state) => {
-        const temp = [...state];
-        temp.push(value);
-        return temp;
-      });
+      updateMessages(value);
     }
 
     function connectedClients(value: number) {
@@ -48,5 +52,6 @@ export const useSocket = () => {
     isConnected,
     connectedClients,
     socket,
+    updateMessages
   };
 };
