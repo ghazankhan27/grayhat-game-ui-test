@@ -33,7 +33,7 @@ export const ChatBubble = (
   if (dir === "right") {
     return (
       <div className="w-fit self-end flex flex-col">
-        <div className="bg-pink-500 text-xs px-5 w-fit max-w-20 self-end">
+        <div className="bg-pink-500 text-xs text-center w-14 self-end">
           <p>{timeAgo(new Date(time))}</p>
         </div>
         <div className="bg-neutral-200 p-2 text-black base-shadow text-sm font-semibold font-mono border-white border-2">
@@ -45,7 +45,7 @@ export const ChatBubble = (
 
   return (
     <div className="w-fit">
-      <div className="bg-pink-500 text-xs px-5 w-fit max-w-20">
+      <div className="bg-pink-500 text-xs text-center w-14 self-end">
         <p>{timeAgo(new Date(time))}</p>
       </div>
       <div className="bg-blue-200 p-2 text-black base-shadow text-sm font-semibold font-mono border-white border-2">
