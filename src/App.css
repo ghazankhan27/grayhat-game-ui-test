@@ -47,3 +47,13 @@
   background-color: white;
   color: black;
 }
+
+@media only screen and (max-width: 600px) {
+  #container {
+    padding: 1em;
+  }
+
+  #chat-area {
+    padding: 4em 0.7em;
+  }
+}

@@ -113,7 +113,7 @@ function App() {
 
   return (
     <div id="container">
-      <div className="h-full flex flex-col w-1/2 m-auto relative">
+      <div className="h-full flex flex-col w-full md:w-4/5 lg:w-1/2 m-auto relative">
         <div id="chat-area" className="w-full">
           {messages.map((m) => {
             const check = userName === m.sender;
