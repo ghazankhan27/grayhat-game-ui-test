@@ -65,7 +65,7 @@ function App() {
       <div className="flex flex-col gap-y-2 justify-center items-center w-screen h-screen text-black font-bold text-xl">
         <form onSubmit={submitName}>
           <p>What is your name?</p>
-          <MyChatInput name="myname" />
+          <MyChatInput placeholder="John Doe" name="myname" />
         </form>
       </div>
     );
@@ -103,7 +103,7 @@ function App() {
         <div>
           <form onSubmit={sendMessage}>
             <div className="w-full">
-              <MyChatInput name="message" />
+              <MyChatInput placeholder="Write a message" name="message" />
             </div>
           </form>
         </div>

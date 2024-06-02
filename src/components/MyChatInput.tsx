@@ -30,6 +30,7 @@ const CustomInput = React.forwardRef(function CustomInput(
 export default function MyChatInput(
   props: React.PropsWithChildren<{
     name: string;
+    placeholder: string;
   }>
 ) {
   return <CustomInput {...props} />;
