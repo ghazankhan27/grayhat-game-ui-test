@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import "./App.css";
 import MyButton from "./components/MyButton";
 import MyChatInput from "./components/MyChatInput";
@@ -9,6 +9,7 @@ import { socket } from "./socket";
 function App() {
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [userName, setUserName] = useState("");
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     function onConnect() {
@@ -92,6 +93,14 @@ function App() {
     form.reset();
   }
 
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
   if (!userName) {
     return (
       <div className="flex flex-col gap-y-2 justify-center items-center w-screen h-screen text-black font-bold text-xl">
@@ -127,6 +136,7 @@ function App() {
               />
             );
           })}
+          <div ref={messagesEndRef} />
         </div>
         <div className="flex gap-x-6 absolute right-0">
           <MyButton>Online (42)</MyButton>

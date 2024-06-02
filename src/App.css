@@ -9,7 +9,7 @@
 #chat-area {
   flex-grow: 1;
   background-color: rgb(77, 77, 77);
-  padding: 4em 2em;
+  padding: 4em 1.5em 0.5em 1.5em;
   overflow: auto;
   display: flex;
   flex-direction: column;
@@ -54,6 +54,6 @@
   }
 
   #chat-area {
-    padding: 4em 0.7em;
+    padding: 4em 0.7em 0.5em 0.7em;
   }
 }
