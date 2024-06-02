@@ -37,7 +37,7 @@ export const ChatBubble = (
           <p>{timeAgo(new Date(time))}</p>
         </div>
         <div className="bg-neutral-200 p-2 text-black base-shadow text-sm font-semibold font-mono border-white border-2">
-          <p>{text}</p>
+          <p className="line-break">{text}</p>
         </div>
       </div>
     );
@@ -49,7 +49,7 @@ export const ChatBubble = (
         <p>{timeAgo(new Date(time))}</p>
       </div>
       <div className="bg-blue-200 p-2 text-black base-shadow text-sm font-semibold font-mono border-white border-2">
-        <p>{text}</p>
+        <p className="line-break">{text}</p>
       </div>
       <p className="text-xs pt-1">{sender}</p>
     </div>
