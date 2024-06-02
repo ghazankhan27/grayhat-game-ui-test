@@ -1,60 +1,21 @@
-import { FormEvent, useEffect, useRef, useState } from "react";
 import "./App.css";
+import { FormEvent, useRef, useState } from "react";
 import MyButton from "./components/MyButton";
 import MyChatInput from "./components/MyChatInput";
 import { ChatBubble } from "./components/ChatBubble";
 import { generateUUID } from "./services/generateUUID";
-import { socket } from "./socket";
+import { useSocket } from "./socket";
+import { useNewDate } from "./hooks/useNewDate";
+import { useScrollToLastMessage } from "./hooks/useScrollToItem";
 
 function App() {
-  const [isConnected, setIsConnected] = useState(socket.connected);
   const [userName, setUserName] = useState("");
-  const messagesEndRef = useRef<HTMLDivElement | null>(null);
-  const [connectedClients, setConnectedClients] = useState(0);
-  const [, setNow] = useState(new Date());
   const [userId] = useState(generateUUID());
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
-  useEffect(() => {
-    function onConnect() {
-      setIsConnected(true);
-    }
-
-    function onDisconnect() {
-      setIsConnected(false);
-    }
-
-    function receiveMessage(value: Message) {
-      setMessages((state) => {
-        const temp = [...state];
-        temp.push(value);
-        return temp;
-      });
-    }
-
-    function connectedClients(value: number) {
-      setConnectedClients(value);
-    }
-
-    socket.on("connect", onConnect);
-    socket.on("disconnect", onDisconnect);
-    socket.on("new-message", receiveMessage);
-    socket.on("connected-clients", connectedClients);
-
-    return () => {
-      socket.off("connect", onConnect);
-      socket.off("disconnect", onDisconnect);
-    };
-  }, []);
-
-  type Message = {
-    text: string;
-    sender: string;
-    id: string;
-    time: Date;
-    senderId: string;
-  };
-
-  const [messages, setMessages] = useState<Message[]>([]);
+  const { messages, connectedClients, isConnected, socket } = useSocket();
+  useNewDate();
+  useScrollToLastMessage(messagesEndRef, messages);
 
   function sendMessage(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -96,20 +57,6 @@ function App() {
     setUserName(data.myname);
     form.reset();
   }
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
-  useEffect(() => {
-    setInterval(() => {
-      setNow(new Date());
-    }, 30000);
-  }, []);
 
   if (!userName) {
     return (
